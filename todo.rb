@@ -13,7 +13,7 @@ end
 configure(:development) do # only in development
   require "sinatra/reloader" # auto-relaods this file so you can see changes w/o stopping starting app 
   also_reload "database_persistence.rb" # this one too
-end # changes to files in production still affect performance, but app must be restarted to see it
+end 
 
 helpers do
   def list_complete?(list)

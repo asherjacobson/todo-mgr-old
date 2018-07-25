@@ -1,3 +1,8 @@
+  supposedlly after putting reloader in development configure block, changes to files in production still affect performance, but app must be restarted to see it, since reloader wouldn't apply in production
+ ruby todo.rb runs it using :4567, heroku local runs it on :5000 ... 
+ sinatra/reloader only seems to be ignored (and therefore the app is running in production mode) after changing the ENV from development to production in the procfile...
+ and yet rack_env is production regardless of what the procfile says when running heroku config
+
 CHANGE ENV TO PRODUCTION OR DEVELOPEMTN IN PROCFILE ACCORDDINGLY
 with all of my apps, i want to write clear and concise comments, without spending much time doing so. as i return to fine-tune the apps in the future, i can eliminate comments that are obvious to more seasoned coders who will be analyzing my code for interviews/ freelance hires. comments to remind myself what certain code does is valuable, even if i'll delete it later, other comments i'll leave so explain to the vieiwer what i'm doing
  session persistence is just an intermediate step to be explicit in the transition from session changes to a session_persistence class of session changing methods to a database persistence class which takes app from session reliance to db backed
