@@ -11,9 +11,9 @@ configure do
 end
 
 configure(:development) do # only in development
-  require "sinatra/reloader"
-  also_reload "database_persistence.rb" # auto-relaods file as with app file
-end
+  require "sinatra/reloader" # auto-relaods this file so you can see changes w/o stopping starting app 
+  also_reload "database_persistence.rb" # this one too
+end # changes to files in production still affect performance, but app must be restarted to see it
 
 helpers do
   def list_complete?(list)
@@ -74,6 +74,10 @@ end
 
 before do
   @storage = DatabasePersistence.new(logger) 
+end
+
+after do
+  @storage.disconnect
 end
 
 get "/" do

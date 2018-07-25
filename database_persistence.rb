@@ -3,8 +3,16 @@ require "pg"
 
 class DatabasePersistence
   def initialize(logger) # logger: sinatra object with built in methods incl. printing to console
-    @db = PG.connect(dbname: "todos")
+    @db = if Sinatra::Base.production?
+            PG.connect(ENV['DATABASE_URL']) # uses database_url ENV variable to determine database when running on heroku
+            else
+              PG.connect(dbname: "todos")
+            end
     @logger = logger
+  end
+
+  def disconnect
+    @db.close
   end
 
   def query(statement, *params)
