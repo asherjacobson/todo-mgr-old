@@ -1,0 +1,8 @@
+with all of my apps, i want to write clear and concise comments, without spending much time doing so. as i return to fine-tune the apps in the future, i can eliminate comments that are obvious to more seasoned coders who will be analyzing my code for interviews/ freelance hires. comments to remind myself what certain code does is valuable, even if i'll delete it later, other comments i'll leave so explain to the vieiwer what i'm doing
+ session persistence is just an intermediate step to be explicit in the transition from session changes to a session_persistence class of session changing methods to a database persistence class which takes app from session reliance to db backed
+ note that we're handling/converting data types (string => int, etc) in the routes as opposed to in the session persistance class, which makes sense 
+changing session storage to database storage:
+1. extract all session persistence methods ( basically all session operations except storing messages ) to a session persistence class
+2. extract that class to different document, session_persistence
+3. copy session_persistence doc to database_persistence doc, change class name to match, comment out code inside methods, and replace with database interaction ie pg methods (after requiring pg atop persistence documents and gemfile and bundle installing pg)
+4. also require_relative 
