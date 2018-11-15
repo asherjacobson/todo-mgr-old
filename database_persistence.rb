@@ -2,12 +2,12 @@ require 'pry'
 require "pg"
 
 class DatabasePersistence
-  def initialize(logger) # logger: sinatra object with built in methods incl. printing to console
+  def initialize(logger) 
     @db = if Sinatra::Base.production?
-            PG.connect(ENV['DATABASE_URL']) # uses database_url ENV variable to determine database when running on heroku
-            else
-              PG.connect(dbname: "todos")
-            end
+            PG.connect(ENV['DATABASE_URL']) # done during heroku set up?
+          else
+            PG.connect(dbname: "todos")
+          end
     @logger = logger
   end
 
@@ -21,29 +21,37 @@ class DatabasePersistence
   end
 
   def find_list(id)
-    sql = "SELECT * FROM lists WHERE id = $1"
+    sql = <<~SQL
+    SELECT lists.*, 
+      COUNT(todos.id) AS todos_count,
+      COUNT(NULLIF(todos.completed, true)) AS todos_remaining_count 
+    FROM lists 
+    LEFT JOIN todos ON lists.id = todos.list_id 
+    WHERE lists.id = $1
+    GROUP BY lists.id
+    ORDER BY lists.name;
+    SQL
     result = query(sql, id) # execute query & store data in result object to display
-    tuple = result.first
-
-    list_id = tuple["id"].to_i
-    todos = find_todos_for_list(list_id)
-    {id: list_id, name: tuple["name"], todos: todos }
+    tuple_to_list_hash(result.first)
   end
 
   def all_lists
-    sql =  "SELECT * FROM lists"
+    sql = <<~SQL
+    SELECT lists.*, 
+      COUNT(todos.id) AS todos_count,
+      COUNT(NULLIF(todos.completed, true)) AS todos_remaining_count 
+    FROM lists 
+    LEFT JOIN todos ON lists.id = todos.list_id 
+    GROUP BY lists.id
+    ORDER BY lists.name;
+    SQL
     result = query(sql)
-
-    result.map do |tuple| # PG::Result includes enumerable
-      list_id = tuple["id"].to_i
-      todos = find_todos_for_list(list_id)
-      {id: list_id, name: tuple["name"], todos: todos}
-    end
+    result.map { |tuple| tuple_to_list_hash(tuple) }
   end
 
   def create_new_list(list_name)
-   sql = "INSERT INTO lists (name) VALUES ($1)"
-   query(sql, list_name) # not storing result data to display
+    sql = "INSERT INTO lists (name) VALUES ($1)"
+    query(sql, list_name) # not storing result data to display
   end
 
   def delete_list(id)
@@ -62,22 +70,20 @@ class DatabasePersistence
   end
 
   def delete_todo_from_list(list_id, todo_id)
-    # id is unique so list_id unneeded, but that could change. prefer to be explicit with destructive actions.
     sql = "DELETE FROM todos WHERE list_id = $1 AND id = $2"
+    # todo_id has a unique constraint so list_id unneeded, but that could change. 
     query(sql, list_id, todo_id)
   end
 
   def update_todo_status(list_id, todo_id, new_status)
-   sql = "UPDATE todos SET completed = $1 WHERE list_id = $2 AND id = $3"
-   query(sql, new_status, list_id, todo_id)
+    sql = "UPDATE todos SET completed = $1 WHERE list_id = $2 AND id = $3"
+    query(sql, new_status, list_id, todo_id)
   end
 
   def mark_all_todos_as_completed(list_id)
-   sql = "UPDATE todos SET completed = true  WHERE list_id = $1"
-   query(sql, list_id)
+    sql = "UPDATE todos SET completed = true WHERE list_id = $1"
+    query(sql, list_id)
   end
-
-  private 
 
   def find_todos_for_list(list_id)
     todos_sql = ("SELECT * FROM todos WHERE list_id = $1") 
@@ -88,6 +94,16 @@ class DatabasePersistence
         name: todos_tuple["name"],
         completed: todos_tuple["completed"] == 't' }
     end
+  end
+
+  private
+
+  def tuple_to_list_hash(tuple)
+    { id: tuple["id"].to_i,
+      name: tuple["name"],
+      todos_count: tuple["todos_count"].to_i, # all PG results are strings
+      todos_remaining_count: tuple["todos_remaining_count"].to_i ,
+      todos_complete_count: tuple["todos_count"].to_i - tuple["todos_remaining_count"].to_i }
   end
 end
 

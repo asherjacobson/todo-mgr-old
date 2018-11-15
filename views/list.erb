@@ -3,11 +3,10 @@
   <header>
     <h2><%= @list[:name] %></h2>
     <ul>
-      <% unless @list[:todos].empty? %> <!-- PG result object will be empty if sql statement returns 0 rows -->
+      <% unless @todos.empty? %> 
       <li>
         <form action="/lists/<%= @list_id %>/complete_all" method="post">
           <button class="check" type="submit">Complete All</button>
-          <!-- if all todos are complete, button will not be displayed due to #todos.complete .check attr in CSS -->
         </form>
       </li>
     <% end %>
@@ -16,7 +15,7 @@
   </header>
 
   <ul>
-    <% sort_todos(@list[:todos]) do |todo| %>
+    <% sort_todos(@todos) do |todo| %>
       <% if todo[:completed] %>
         <li class="complete">
       <% else %>
@@ -50,5 +49,5 @@
 </form>
 
 <% content_for :header_links do %>
-  <a class="list" href="/lists">All Lists</a>
+  <a class="add" href="/lists">All Lists</a>
 <% end %>
