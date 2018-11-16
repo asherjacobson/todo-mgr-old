@@ -1,3 +1,4 @@
+
 require "sinatra"
 require "sinatra/content_for"
 require "tilt/erubis"
@@ -10,9 +11,9 @@ configure do
   set :erb, :escape_html => true
 end
 
-configure(:development) do # only in development
-  require "sinatra/reloader" # auto-relaods this file so you can see changes w/o stopping starting app 
-  also_reload "database_persistence.rb" # this one too
+configure(:development) do 
+  require "sinatra/reloader" 
+  also_reload "database_persistence.rb" 
 end 
 
 helpers do
@@ -48,7 +49,6 @@ def load_list(id)
   halt
 end
 
-# Return an error message if the name is invalid. Return nil if name is valid.
 def error_for_list_name(name)
   if !(1..100).cover? name.size
     "List name must be between 1 and 100 characters."
@@ -57,7 +57,6 @@ def error_for_list_name(name)
   end
 end
 
-# Return an error message if the name is invalid. Return nil if name is valid.
 def error_for_todo(name)
   if !(1..100).cover? name.size
     "Todo must be between 1 and 100 characters."
@@ -76,18 +75,15 @@ get "/" do
   redirect "/lists"
 end
 
-# View list of lists
 get "/lists" do
   @lists = @storage.all_lists
   erb :lists, layout: :layout
 end
 
-# Render the new list form
 get "/lists/new" do
   erb :new_list, layout: :layout
 end
 
-# Create a new list
 post "/lists" do
   list_name = params[:list_name].strip
 
@@ -102,7 +98,6 @@ post "/lists" do
   end
 end
 
-# View a single todo list
 get "/lists/:id" do
   @list_id = params[:id].to_i
   @list = load_list(@list_id)
@@ -110,14 +105,12 @@ get "/lists/:id" do
   erb :list, layout: :layout
 end
 
-# Edit an existing todo list
 get "/lists/:id/edit" do
   id = params[:id].to_i
   @list = load_list(id)
   erb :edit_list, layout: :layout
 end
 
-# Update an existing todo list
 post "/lists/:id" do
   list_name = params[:list_name].strip
   id = params[:id].to_i
@@ -134,10 +127,8 @@ post "/lists/:id" do
   end
 end
 
-# Delete a todo list
 post "/lists/:id/destroy" do
   id = params[:id].to_i
-
   @storage.delete_list(id)
 
   session[:success] = "The list has been deleted."
@@ -148,7 +139,6 @@ post "/lists/:id/destroy" do
   end
 end
 
-# Add a new todo to a list
 post "/lists/:list_id/todos" do
   @list_id = params[:list_id].to_i
   @list = load_list(@list_id)
@@ -167,11 +157,9 @@ post "/lists/:list_id/todos" do
   end
 end
 
-# Delete a todo from a list
 post "/lists/:list_id/todos/:id/destroy" do
   @list_id = params[:list_id].to_i
   @list = load_list(@list_id)
-
   todo_id = params[:id].to_i
   @storage.delete_todo_from_list(@list_id, todo_id)
 
@@ -184,7 +172,6 @@ post "/lists/:list_id/todos/:id/destroy" do
   end
 end
 
-# Update the status of a todo
 post "/lists/:list_id/todos/:id" do
   @list_id = params[:list_id].to_i
   @list = load_list(@list_id)
@@ -197,7 +184,6 @@ post "/lists/:list_id/todos/:id" do
   redirect "/lists/#{@list_id}"
 end
 
-# Mark all todos as complete for a list
 post "/lists/:id/complete_all" do
   @list_id = params[:id].to_i
   @list = load_list(@list_id)
@@ -207,3 +193,4 @@ post "/lists/:id/complete_all" do
   session[:success] = "All todos have been completed."
   redirect "/lists/#{@list_id}"
 end
+

@@ -14,7 +14,7 @@
 <form action="/lists/<%= params[:id] %>" method="post">
   <dl>
     <dt>
-      <label for="list_name">Enter the new name for the list:</label>
+    <label for="list_name">Enter the new name for the list:</label>
     </dt>
     <dd>
     <input name="list_name" placeholder="List Name" type="text" value="<%= params[:list_name] || @list[:name] %>">
