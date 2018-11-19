@@ -1,0 +1,23 @@
+    <h2>Register Today</h2>
+
+    <main id="register">
+    <form action="/attempt_register" method="post">
+      <label>Username:
+        <input name="username" type="text" value="<%= @username %>">
+      </label>
+      <label>Password:
+        <input name="password" type="password" id="password">
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" onclick="togglePassword()"> Show Password
+      </label>
+      <label for="confirm_password">Confirm Password:
+        <input name="confirm_password" type="password" id="confirm_password">
+      </label>
+      <button type="submit">Register</button>
+    </form>
+
+    <form action="/cancel" method="post">
+      <button type="submit">Cancel</button>
+    </form>
+    </main>

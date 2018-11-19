@@ -1,6 +1,7 @@
-
 require "sinatra"
 require "sinatra/content_for"
+require "bcrypt"
+require "yaml"
 require "tilt/erubis"
 require "pry"
 require_relative "database_persistence"
@@ -64,11 +65,87 @@ def error_for_todo(name)
 end
 
 before do
-  @storage = DatabasePersistence.new(logger) 
+  @username = session[:logged_in] || ""
+  @storage = DatabasePersistence.new(logger, @username) 
+
+  if @username
+    @lists = @username + "_lists"
+    @todos = @username + "_todos"
+  end
 end
 
 after do
   @storage.disconnect
+end
+
+class UsernamePersistence
+  attr_accessor :username
+  def initialize(username)
+    @username = username
+  end
+end
+###################################################### LOGGED OUT ROUTES
+post "/signin" do # display signin form
+  erb :signin
+end
+
+post "/attempt_signin" do 
+  @username = params["username"].strip.capitalize 
+  @credentials = YAML.load_file(File.expand_path("../data/credentials.yml", __FILE__))
+  encrypted_password = @credentials[@username]
+
+  if encrypted_password == params["password"].strip 
+    session[:logged_in] = @username
+    session[:success] = "Welcome #{@username}."
+    redirect "/"
+
+  else
+    session[:error] = "Invalid Credentials. Please enter a valid username and password."
+    erb :signin 
+  end
+end
+
+post "/register" do # view register form
+  erb :register
+end
+
+post "/attempt_register" do 
+  @username = params["username"].strip.capitalize
+  @password = params["password"]
+  @credentials = YAML.load_file(File.expand_path("../data/credentials.yml", __FILE__))
+
+  if @password != params["confirm_password"]
+    session[:error] = "Passwords did not match. Please check your spelling and try again."
+  elsif [@username, @password].include?""
+    session[:error] = "Neither username nor password may be blank."
+  elsif @username.include?" "
+    session[:error] = "Username may not contain spaces"
+  elsif @credentials[@username] || @credentials[@username.delete(' ')] # ' ' 4 table names
+    session[:error] = "That username is taken. Please try another one."
+  else
+
+    @credentials[@username] = BCrypt::Password.create(params["password"].strip) 
+    File.open("data/credentials.yml", "w") { |file| file.write @credentials.to_yaml }
+    session[:success] = "You have successfully created a new account."
+
+    session[:logged_in] = @username
+    @storage = DatabasePersistence.new(logger, @username) 
+    @storage.create_tables
+    redirect "/"
+  end
+  erb :register
+end
+
+post "/cancel" do
+  redirect "/"
+end
+
+########################################################## LOGGED IN ROUTES
+
+post "/signout" do
+  session.delete :logged_in
+  session[:success] = "You have been signed out"
+  redirect "/"
 end
 
 get "/" do
@@ -76,7 +153,7 @@ get "/" do
 end
 
 get "/lists" do
-  @lists = @storage.all_lists
+  @lists = @storage.all_lists if @username != ""
   erb :lists, layout: :layout
 end
 
@@ -164,7 +241,6 @@ post "/lists/:list_id/todos/:id/destroy" do
   @storage.delete_todo_from_list(@list_id, todo_id)
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
-    binding.pry
     status 204
   else
     session[:success] = "The todo has been deleted."

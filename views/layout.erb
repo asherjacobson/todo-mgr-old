@@ -10,27 +10,38 @@
     <script src="/javascripts/application.js"></script>
   </head>
   <body>
-    <header>
-      <h1>To-Do Tracker</h1>
-      <div class="actions">
-        <%== yield_content :header_links %>
-      </div>
-    </header>
 
-    <% if session[:error] %>
-      <div class="flash error">
-        <p><%= session.delete(:error) %></p>
-      </div>
-    <% end %>
+      <header>
+        <h1>To-Do Tracker</h1>
+    <% if session[:logged_in] %>
+        <div class="actions">
+          <%== yield_content :header_links %>
+        </div>
+      <% end %>
+      </header>
 
-    <% if session[:success] %>
-      <div class="flash success">
-        <p><%= session.delete(:success) %></p>
-      </div>
-    <% end %>
+      <% if session[:error] %>
+        <div class="flash error">
+          <p><%= session.delete(:error) %></p>
+        </div>
+      <% end %>
+      <% if session[:success] %>
+        <div class="flash success">
+          <p><%= session.delete(:success) %></p>
+        </div>
+      <% end %>
 
-    <main>
-    <%== yield %>
-    </main>
+      <main>
+      <%== yield %>
+      </main>
+
+    <% if session[:logged_in] %>
+      <div class="button">
+      <p>Signed in as <%= session[:logged_in] %>.</p>
+        <form action="/signout" method="post">
+          <button type="submit">Sign Out</button>
+        </form>
+      </div>
+      <% end %>
   </body>
 </html>

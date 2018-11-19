@@ -1,3 +1,97 @@
+.button {
+  margin: 100px auto;
+  display:  table;
+}
+
+.button form, .button p {
+  display: table-cell;
+}
+
+.button button, #signin button, #register button {
+  width: 110px;
+  height: 33px;
+  font-size: 18px;
+  margin-left: 20px;
+  margin-bottom: 2px;
+}
+
+#signin input, #register input {
+  width: 200px;
+  height: 11px;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+#signin form[action="/cancel"] button {
+  top: 264px;
+  left: 523px;
+}
+
+#signin form[action="/attempt_signin"] {
+  position: relative;
+}
+
+form[action="/attempt_register"] {
+  /* margin-left: 50px; */
+}
+
+#signin .checkbox, #register .checkbox {
+  position: absolute;
+  top: 100px;
+  right: 573px;
+  margin-top: 5px;
+}
+
+#signin form[action^="/att"] button {
+  right: 530px;
+  top: 0;
+}
+
+#signin button, #register button {
+  position: absolute;
+  right: 810px;
+  top: 421px;
+}
+
+#register form[action="/cancel"] button {
+  top: 260px;
+  right: 811px;
+}
+#signin .checkbox input, #register .checkbox input {
+  width: 30px;
+  height: 17px;
+  vertical-align: top;
+  margin-top: 5px;
+}
+
+#register label {
+  width: 220px;
+}
+
+label {
+  width: 308px;
+  margin: 20px 0;
+  display: block;
+}
+
+.signed_out .button {
+  display: inline-block;
+  margin-top: 30px;
+}
+
+.signed_out button {
+  margin-left: 0;
+}
+
+.signed_out div {
+  margin-left: 32px;
+}
+
+.signed_out {
+  margin-top: 100px;
+  width: 330px;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -75,9 +169,8 @@ main {
 }
 
 main > form {
-  margin-top: 1.5em;
+  margin-top: 2.5em;
 }
-
 
 form dt {
   padding: 0 0 25px 0;
@@ -87,12 +180,21 @@ form dd {
   padding: 0 0 15px 0;
 }
 
-form input[type="text"] {
+#register .checkbox {
+  right: 717px;
+  top: 339px;
+}
+
+#signin input[name="password"] {
+  margin-left: 15px;
+}
+
+form input[type="text"], input[type="password"] {
   width: 100%;
   height: 58px;
   padding: 15px 20px;
   font: normal 20px "PT Sans", Helvetica, Arial, sans-serif;
-  border: 1px solid #a4a4a4;
+  /* border: 1px solid #a4a4a4; */
   border-radius: 8px;
   box-sizing: border-box;
 }
@@ -137,7 +239,7 @@ form fieldset.actions a:hover {
 }
 
 .flash p {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
 }
 

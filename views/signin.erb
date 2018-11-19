@@ -1,0 +1,18 @@
+    <main id="signin">
+    <form action="/attempt_signin" method="post">
+      <label>Username:
+        <input name="username" type="text" value="<%= @username %>">
+      </label>
+      <label>Password:
+        <input name="password" type="password" id="password">
+      </label>
+      <label class="checkbox">Show Password
+        <input class="show" type="checkbox" onclick="togglePassword()">
+      </label>
+      <button type="submit">Sign In</button>
+    </form>
+
+    <form action="/cancel" method="post">
+      <button type="submit">Cancel</button>
+    </form>
+    </main>
