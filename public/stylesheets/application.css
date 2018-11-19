@@ -28,7 +28,7 @@
 }
 
 #signin form[action="/attempt_signin"] {
-  position: relative;
+  /* position: relative; */
 }
 
 form[action="/attempt_register"] {
@@ -37,14 +37,14 @@ form[action="/attempt_register"] {
 
 #signin .checkbox, #register .checkbox {
   position: absolute;
-  top: 100px;
-  right: 573px;
+  top: 310px;
+  left: 304px;
   margin-top: 5px;
 }
 
 #signin form[action^="/att"] button {
-  right: 530px;
-  top: 0;
+  left: 523px;
+  top: 210px;
 }
 
 #signin button, #register button {
