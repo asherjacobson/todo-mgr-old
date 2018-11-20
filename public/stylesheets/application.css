@@ -23,39 +23,50 @@
 }
 
 #signin form[action="/cancel"] button {
-  top: 264px;
-  left: 523px;
+  top: 0px;
+  left: 332px;
 }
 
-#signin form[action="/attempt_signin"] {
-  /* position: relative; */
+#register, #signin {
+  position: relative;
 }
 
-form[action="/attempt_register"] {
-  /* margin-left: 50px; */
+#register form[action="/cancel"], #register form[action="/attempt_register"] button {
+  position: absolute;
 }
 
+#register form[action="/cancel"] {
+  /* top: 0px; */
+  /* left: 0px; */
+  /* z-index:  2; */
+}
+
+#register form[action="/attempt_register"] button {
+  top: 185px;
+  left: 260px;
+}
+  
 #signin .checkbox, #register .checkbox {
   position: absolute;
-  top: 310px;
-  left: 304px;
+  top: 100px;
+  left: 120px;
   margin-top: 5px;
 }
 
 #signin form[action^="/att"] button {
-  left: 523px;
-  top: 210px;
+  left: 333px;
+  top: 53px;
 }
 
 #signin button, #register button {
   position: absolute;
-  right: 810px;
+  /* right: 810px; */
   top: 421px;
 }
 
 #register form[action="/cancel"] button {
-  top: 260px;
-  right: 811px;
+  top: -264px;
+  right: -390px;
 }
 #signin .checkbox input, #register .checkbox input {
   width: 30px;
@@ -181,8 +192,8 @@ form dd {
 }
 
 #register .checkbox {
-  right: 717px;
-  top: 339px;
+  left: 264px;
+  top: 105px;
 }
 
 #signin input[name="password"] {
